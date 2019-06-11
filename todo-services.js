@@ -1,21 +1,23 @@
 const Todos = require("./todo");
+class TodoServices {
+  async getAllTodos() {
+    return Todos.find({});
+  }
 
-module.exports.getAllTodos = async () => {
-  return Todos.find({});
-};
+  async createTodo(todo) {
+    let todos = new Todos(todo);
+    let result = await todos.save();
+    return result;
+  }
 
-module.exports.createTodo = async (todo) => {
-  let todos = new Todos(todo);
-  let result = await todos.save();
-  return result;
-};
+  async updateTodoByID(id, updateInfo) {
+    let todos = Todos.findByIdAndUpdate(id, updateInfo, { new: true });
+    return todos;
+  }
 
-module.exports.updateTodoByID = async (id, updateInfo) => {
-  let todos = Todos.findByIdAndUpdate(id, updateInfo, { new: true });
-  return todos;
-};
-
-module.exports.deleteTodoByID = async (id) => {
-  let todos = Todos.findByIdAndDelete(id);
-  return todos;
-};
+  async deleteTodoByID(id) {
+    let todos = Todos.findByIdAndDelete(id);
+    return todos;
+  }
+}
+module.exports = new TodoServices();

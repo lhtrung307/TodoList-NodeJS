@@ -3,8 +3,6 @@ const TodoServices = require("./todo-services");
 
 let url = "/todos";
 
-jest.setTimeout(100000);
-
 describe("Todos endpoints", () => {
   let server;
   beforeAll(async () => {
@@ -21,6 +19,7 @@ describe("Todos endpoints", () => {
 
   describe(`GET ${url}`, () => {
     it("Should get all categories", async () => {
+      expect.assertions(1);
       const injectOptions = {
         method: "GET",
         url

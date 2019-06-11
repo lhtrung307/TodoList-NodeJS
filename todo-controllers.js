@@ -1,14 +1,9 @@
-const {
-  getAllTodos,
-  createTodo,
-  updateTodoByID,
-  deleteTodoByID
-} = require("./todo-services");
+const TodoServices = require("./todo-services");
 
 class TodoController {
   async list(request, h) {
     try {
-      let todos = await getAllTodos();
+      let todos = await TodoServices.getAllTodos();
       return h.response(todos).code(200);
     } catch (error) {
       return h.response(error).code(500);
@@ -17,7 +12,7 @@ class TodoController {
 
   async create(request, h) {
     try {
-      let todos = await createTodo(request.payload);
+      let todos = await TodoServices.createTodo(request.payload);
       return h.response(todos).code(200);
     } catch (error) {
       return h.response(error).code(500);
@@ -28,7 +23,7 @@ class TodoController {
     try {
       if (request.payloay) {
         let todoID = request.params.id;
-        let todos = await updateTodoByID(todoID, request.payload);
+        let todos = await TodoServices.updateTodoByID(todoID, request.payload);
         return h.response(todos).code(200);
       } else {
         return h.response({ message: "Body required" });
@@ -41,7 +36,7 @@ class TodoController {
   async delete(request, h) {
     try {
       let todoID = request.params.id;
-      let todos = await deleteTodoByID(todoID);
+      let todos = await TodoServices.deleteTodoByID(todoID);
       return h.response(todos).code(200);
     } catch (error) {
       return h.response(error).code(500);
