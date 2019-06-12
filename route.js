@@ -1,4 +1,4 @@
-const Todo = require("./todo-controllers");
+const Todo = require("./todo-services");
 
 const Router = {
   name: "todo-list-router",
@@ -7,25 +7,25 @@ const Router = {
     server.route({
       method: "GET",
       path: "/todos",
-      handler: Todo.list
+      handler: Todo.listTodos
     });
 
     server.route({
       method: "POST",
       path: "/todos",
-      handler: Todo.create
+      handler: Todo.createTodo
     });
 
     server.route({
       method: "PUT",
       path: "/todos/{id}",
-      handler: Todo.update
+      handler: Todo.updateTodo
     });
 
     server.route({
       method: "DELETE",
       path: "/todos/{id}",
-      handler: Todo.delete
+      handler: Todo.deleteTodo
     });
   }
 };

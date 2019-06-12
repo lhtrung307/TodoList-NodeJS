@@ -1,5 +1,5 @@
 const { init } = require("./server");
-const TodoServices = require("./todo-services");
+const Todos = require("./todo");
 
 let url = "/todos";
 
@@ -29,10 +29,29 @@ describe("Todos endpoints", () => {
         { name: "Todo 2", description: "This is todo 2" },
         { name: "Todo 3", description: "This is todo 3" }
       ];
-      const mockGetAllTodos = jest.fn().mockReturnValue(returnValue);
-      TodoServices.getAllTodos = mockGetAllTodos;
+      const mockListTodos = jest.fn().mockReturnValue(returnValue);
+      Todos.list = mockListTodos;
       const response = await server.inject(injectOptions);
       expect(response.statusCode).toEqual(200);
+    });
+  });
+
+  describe(`POST ${url}`, () => {
+    it("Should return error when field name is missing", async () => {
+      // expect.assertions(1);
+      const injectOptions = {
+        method: "POST",
+        url,
+        payload: {
+          description: "This is todo 1"
+        }
+      };
+      returnValue = new Error("Todo must have a name");
+      console.log(returnValue);
+      const mockCreateTodo = jest.fn().mockReturnValue(returnValue);
+      Todos.createTodo = mockCreateTodo;
+      const response = await server.inject(injectOptions);
+      expect(response.payload).toEqual(returnValue.message);
     });
   });
 });

@@ -14,4 +14,19 @@ const TodoSchema = new Schema({
   }
 });
 
-module.exports = Mongoose.model("todo", TodoSchema);
+const TodoModel = Mongoose.model("todo", TodoSchema);
+
+const list = () => TodoModel.find();
+const save = (todo) => TodoModel.create(todo);
+const updateByID = (id, updateData) =>
+  TodoModel.findByIdAndUpdate(id, updateData, { new: true });
+const deleteByID = (id) => Todos.findByIdAndDelete(id);
+
+module.exports = {
+  TodoModel,
+  TodoSchema,
+  list,
+  save,
+  updateByID,
+  deleteByID
+};
