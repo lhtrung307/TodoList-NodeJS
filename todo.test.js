@@ -37,6 +37,26 @@ describe("Todos endpoints", () => {
   });
 
   describe(`POST ${url}`, () => {
+    it("Should return status code equal 200", async () => {
+      const injectOptions = {
+        method: "POST",
+        url,
+        payload: {
+          name: "Todo 1",
+          description: "This is todo 1"
+        }
+      };
+      returnValue = {
+        _id: 1,
+        name: "Todo 1",
+        description: "This is todo 1"
+      };
+      const mockSaveTodo = jest.fn().mockReturnValue(returnValue);
+      Todos.save = mockSaveTodo;
+      const response = await server.inject(injectOptions);
+      expect(response.statusCode).toEqual(200);
+    });
+
     it("Should return error when field name is missing", async () => {
       // expect.assertions(1);
       const injectOptions = {
@@ -47,10 +67,11 @@ describe("Todos endpoints", () => {
         }
       };
       returnValue = new Error("Todo must have a name");
-      const mockCreateTodo = jest.fn().mockReturnValue(returnValue);
-      Todos.createTodo = mockCreateTodo;
+      const mockSaveTodo = jest.fn().mockReturnValue(returnValue);
+      Todos.save = mockSaveTodo;
       const response = await server.inject(injectOptions);
-      expect(response.payload).toEqual(returnValue.message);
+      expect(Todos.save.mock.calls.length).toBe(1);
+      // expect(response.payload).toEqual(returnValue.message);
     });
   });
 
@@ -95,6 +116,17 @@ describe("Todos endpoints", () => {
       expect(JSON.parse(response.payload)).toEqual(returnValue);
     });
 
+    it("Should return message if request don't have payload", async () => {
+      let todoID = 1;
+      const injectOptions = {
+        method: "PUT",
+        url: `${url}/${todoID}`
+      };
+      returnValue = { message: "Body required" };
+      const response = await server.inject(injectOptions);
+      expect(JSON.parse(response.payload)).toEqual(returnValue);
+    });
+
     it("Should return status code 404 if id not exist", async () => {
       let todoID = 1;
       const injectOptions = {
@@ -116,19 +148,16 @@ describe("Todos endpoints", () => {
     it("Should return status code equal 200", async () => {
       let todoID = 1;
       const injectOptions = {
-        method: "PUT",
-        url: `${url}/${todoID}`,
-        payload: {
-          description: "This is todo 1"
-        }
+        method: "DELETE",
+        url: `${url}/${todoID}`
       };
       returnValue = {
         _id: todoID,
         name: "Todo 1",
         description: "This is todo 1"
       };
-      const mockUpdateByID = jest.fn().mockReturnValue(returnValue);
-      Todos.updateByID = mockUpdateByID;
+      const mockDeleteByID = jest.fn().mockReturnValue(returnValue);
+      Todos.deleteByID = mockDeleteByID;
       const response = await server.inject(injectOptions);
       expect(response.statusCode).toEqual(200);
     });
