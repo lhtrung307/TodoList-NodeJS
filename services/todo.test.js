@@ -1,5 +1,5 @@
-const { init } = require("./server");
-const Todos = require("./todo");
+const { init } = require("../server");
+const Todos = require("../models/todo");
 
 let url = "/todos";
 

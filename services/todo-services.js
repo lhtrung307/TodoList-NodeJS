@@ -1,4 +1,4 @@
-const Todos = require("./todo");
+const Todos = require("../models/todo");
 
 class TodoServices {
   async listTodos(request, h) {
