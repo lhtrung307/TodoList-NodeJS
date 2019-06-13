@@ -21,22 +21,18 @@ class TodoServices {
 
   async updateTodo(request, h) {
     try {
-      if (request.payload) {
-        let todoID = request.params.id;
-        let todos = await Todos.updateByID(todoID, request.payload);
-        if (todos) {
-          return h.response(todos).code(200);
-        } else {
-          return h
-            .response({
-              statusCode: 404,
-              error: "Not Found",
-              message: "Not Found"
-            })
-            .code(404);
-        }
+      let todoID = request.params.id;
+      let todos = await Todos.updateByID(todoID, request.payload);
+      if (todos) {
+        return h.response(todos).code(200);
       } else {
-        return h.response({ message: "Body required" });
+        return h
+          .response({
+            statusCode: 404,
+            error: "Not Found",
+            message: "Not Found"
+          })
+          .code(404);
       }
     } catch (error) {
       return h.response(error).code(500);

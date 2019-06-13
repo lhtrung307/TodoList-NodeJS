@@ -18,7 +18,20 @@ describe("Todos endpoints", () => {
   });
 
   describe(`GET ${url}`, () => {
-    it("Should get all categories", async () => {
+    it("Should have status code equal 200", async () => {
+      expect.assertions(1);
+      const injectOptions = {
+        method: "GET",
+        url
+      };
+      const returnValue = [];
+      const mockListTodos = jest.fn().mockReturnValue(returnValue);
+      Todos.list = mockListTodos;
+      const response = await server.inject(injectOptions);
+      expect(response.statusCode).toEqual(200);
+    });
+
+    it("Should return 3 todos", async () => {
       expect.assertions(1);
       const injectOptions = {
         method: "GET",
@@ -32,12 +45,12 @@ describe("Todos endpoints", () => {
       const mockListTodos = jest.fn().mockReturnValue(returnValue);
       Todos.list = mockListTodos;
       const response = await server.inject(injectOptions);
-      expect(response.statusCode).toEqual(200);
+      expect(JSON.parse(response.payload)).toHaveLength(3);
     });
   });
 
   describe(`POST ${url}`, () => {
-    it("Should return status code equal 200", async () => {
+    it("Should have status code equal 200", async () => {
       const injectOptions = {
         method: "POST",
         url,
@@ -57,8 +70,27 @@ describe("Todos endpoints", () => {
       expect(response.statusCode).toEqual(200);
     });
 
-    it("Should return error when field name is missing", async () => {
-      // expect.assertions(1);
+    it("Should return created todo", async () => {
+      const injectOptions = {
+        method: "POST",
+        url,
+        payload: {
+          name: "Todo 1",
+          description: "This is todo 1"
+        }
+      };
+      returnValue = {
+        _id: 1,
+        name: "Todo 1",
+        description: "This is todo 1"
+      };
+      const mockSaveTodo = jest.fn().mockReturnValue(returnValue);
+      Todos.save = mockSaveTodo;
+      const response = await server.inject(injectOptions);
+      expect(JSON.parse(response.payload)).toEqual(returnValue);
+    });
+
+    it("Should return error message when field name is missing", async () => {
       const injectOptions = {
         method: "POST",
         url,
@@ -66,12 +98,8 @@ describe("Todos endpoints", () => {
           description: "This is todo 1"
         }
       };
-      returnValue = new Error("Todo must have a name");
-      const mockSaveTodo = jest.fn().mockReturnValue(returnValue);
-      Todos.save = mockSaveTodo;
       const response = await server.inject(injectOptions);
-      expect(Todos.save.mock.calls.length).toBe(1);
-      // expect(response.payload).toEqual(returnValue.message);
+      expect(JSON.parse(response.payload)).toHaveProperty("message");
     });
   });
 
@@ -124,7 +152,7 @@ describe("Todos endpoints", () => {
       };
       returnValue = { message: "Body required" };
       const response = await server.inject(injectOptions);
-      expect(JSON.parse(response.payload)).toEqual(returnValue);
+      expect(JSON.parse(response.payload)).toHaveProperty("message");
     });
 
     it("Should return status code 404 if id not exist", async () => {
@@ -160,6 +188,23 @@ describe("Todos endpoints", () => {
       Todos.deleteByID = mockDeleteByID;
       const response = await server.inject(injectOptions);
       expect(response.statusCode).toEqual(200);
+    });
+
+    it("Should return deleted todo", async () => {
+      let todoID = 1;
+      const injectOptions = {
+        method: "DELETE",
+        url: `${url}/${todoID}`
+      };
+      returnValue = {
+        _id: todoID,
+        name: "Todo 1",
+        description: "This is todo 1"
+      };
+      const mockDeleteByID = jest.fn().mockReturnValue(returnValue);
+      Todos.deleteByID = mockDeleteByID;
+      const response = await server.inject(injectOptions);
+      expect(JSON.parse(response.payload)).toEqual(returnValue);
     });
   });
 });
