@@ -21,8 +21,9 @@ const TaskSchema = new Schema({
 
 const TaskModel = Mongoose.model("task", TaskSchema);
 
-const listByPersonID = (personID) =>
+const listByPersonID = (personID, sort) =>
   TaskModel.find({ personID })
+    .sort(sort)
     .then((tasks) => tasks)
     .catch((error) => {
       return { error };

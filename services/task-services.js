@@ -2,11 +2,17 @@ const Tasks = require("../models/task");
 const Joi = require("@hapi/joi");
 
 class TaskServices {
-  async listTasks(personID) {
+  async listTasks(personID, sortType) {
     if (!personID || typeof personID !== "string") {
       throw new Error("Person id cannot be empty");
     }
-    let tasks = await Tasks.listByPersonID(personID);
+    let sort;
+    if (!sortType) {
+      sort = {};
+    } else {
+      sort = { name: sortType };
+    }
+    let tasks = await Tasks.listByPersonID(personID, sort);
     if (tasks.error) {
       throw tasks.error;
     }
